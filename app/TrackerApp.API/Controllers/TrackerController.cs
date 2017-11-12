@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
+using TrackerApp.Track.Interface;
 
 namespace TrackerApp.API.Controllers
 {
@@ -19,23 +20,32 @@ namespace TrackerApp.API.Controllers
 
         [HttpPost]
         [Route("locations")]
-        public async Task<bool> Log(Object location)
+        public async Task<bool> Log(Location location)
         {
-            throw new NotImplementedException();
+            var reporter = TrackerConnectionFactory.CreateLocationReporter();
+            await reporter.ReportLocation(location);
+            return true;
         }
 
         [HttpGet]
         [Route("order/{orderId}/lastseen")]
         public async Task<DateTime?> LastSeen(Guid orderId)
         {
-            throw new NotImplementedException();
+            var viewer = TrackerConnectionFactory.CreateLocationViewer();
+            return await viewer.GetLastReportingTime(orderId);
         }
 
         [HttpGet]
         [Route("order/{orderId}/lastlocation")]
         public async Task<object> LastLocation(Guid orderId)
         {
-            throw new NotImplementedException();
+            var viewer = TrackerConnectionFactory.CreateLocationViewer();
+            var location = await viewer.GetLastReportingLocation(orderId);
+            if(location == null)
+            {
+                return null;
+            }
+            return new { Latitude = location.Value.Key, Longitude = location.Value.Value };
         }
     }
 }
