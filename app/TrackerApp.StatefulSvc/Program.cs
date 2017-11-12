@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Runtime;
+using System.Fabric;
 
 namespace TrackerApp.StatefulSvc
 {
@@ -19,14 +20,17 @@ namespace TrackerApp.StatefulSvc
                 // Registering a service maps a service type name to a .NET type.
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
+                using (FabricRuntime runtime = FabricRuntime.Create())
+                {
+                    ServiceRuntime.RegisterServiceAsync("TrackerApp.StatefulSvcType",
+                       context => new StatefulSvc(context)).GetAwaiter().GetResult();
 
-                ServiceRuntime.RegisterServiceAsync("TrackerApp.StatefulSvcType",
-                    context => new StatefulSvc(context)).GetAwaiter().GetResult();
+                    ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(StatefulSvc).Name);
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(StatefulSvc).Name);
-
-                // Prevents this host process from terminating so services keep running.
-                Thread.Sleep(Timeout.Infinite);
+                    // Prevents this host process from terminating so services keep running.
+                    Thread.Sleep(Timeout.Infinite);
+                }
+       
             }
             catch (Exception e)
             {
