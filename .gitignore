@@ -4,3 +4,5 @@
 
 /app/.vs/TrackerApplication/v15
 /app/packages
+/app/TrackerApp.Order/obj/x64/Debug
+/app/TrackerApp.Order.Interfaces/obj/x64/Debug

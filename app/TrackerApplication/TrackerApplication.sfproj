@@ -33,6 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TrackerApp.API\TrackerApp.API.csproj" />
+    <ProjectReference Include="..\TrackerApp.Order\TrackerApp.Order.csproj" />
     <ProjectReference Include="..\TrackerApp.StatefulSvc\TrackerApp.StatefulSvc.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
