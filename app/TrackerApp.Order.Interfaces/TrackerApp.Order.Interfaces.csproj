@@ -90,6 +90,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IOrder.cs" />
+    <Compile Include="OrderConnectionFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

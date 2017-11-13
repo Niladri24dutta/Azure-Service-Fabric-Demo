@@ -16,6 +16,8 @@ namespace TrackerApp.Order.Interfaces
     /// </summary>
     public interface IOrder : IActor
     {
-        
+        Task<KeyValuePair<float, float>> GetLatestLocation();
+        Task SetLocation(DateTime time, float latitude, float longitude);
+
     }
 }
