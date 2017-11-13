@@ -14,12 +14,12 @@ namespace TrackerApp.Track.Interface
 
         public static ILocationReporter CreateLocationReporter()
         {
-            return ServiceProxy.Create<ILocationReporter>(LocationReporterServiceUrl, new ServicePartitionKey(1));
+            return ServiceProxy.Create<ILocationReporter>(LocationReporterServiceUrl, new ServicePartitionKey(0));
         }
 
         public static ILocationViewer CreateLocationViewer()
         {
-            return ServiceProxy.Create<ILocationViewer>(LocationReporterServiceUrl, new ServicePartitionKey(1));
+            return ServiceProxy.Create<ILocationViewer>(LocationReporterServiceUrl, new ServicePartitionKey(0));
         }
     }
 }

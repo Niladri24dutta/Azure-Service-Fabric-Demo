@@ -45,14 +45,20 @@ namespace TrackerApp.Order
         {
             public List<LocationAtTime> LocationHistory { get; set; }
         }
-        public Task<KeyValuePair<float, float>> GetLatestLocation()
+        public async Task<KeyValuePair<float, float>> GetLatestLocation()
         {
-            throw new NotImplementedException();
+            var state = await StateManager.GetStateAsync<OrderState>("State");
+            var location = state.LocationHistory.OrderByDescending(x => x.TimeStamp).Select(x =>
+                new KeyValuePair<float, float>(x.Latitude, x.Longitude)
+            ).FirstOrDefault();
+            return location;
         }
 
-        public Task SetLocation(DateTime time, float latitude, float longitude)
+        public async Task SetLocation(DateTime time, float latitude, float longitude)
         {
-            throw new NotImplementedException();
+            var state = await this.StateManager.GetStateAsync<OrderState>("State");
+            state.LocationHistory.Add(new LocationAtTime { TimeStamp = time, Latitude = latitude, Longitude = longitude });
+            await this.StateManager.AddOrUpdateStateAsync<OrderState>("State", state, (s, actorState) => state);
         }
 
         /// <summary>

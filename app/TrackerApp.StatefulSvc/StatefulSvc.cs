@@ -10,6 +10,8 @@ using Microsoft.ServiceFabric.Services.Runtime;
 using TrackerApp.Track.Interface;
 using Microsoft.ServiceFabric.Services.Remoting;
 using Microsoft.ServiceFabric.Services.Remoting.Runtime;
+using Microsoft.ServiceFabric.Actors;
+using TrackerApp.Order.Interfaces;
 
 namespace TrackerApp.StatefulSvc
 {
@@ -20,9 +22,19 @@ namespace TrackerApp.StatefulSvc
             : base(context)
         { }
 
-        public Task<KeyValuePair<float, float>?> GetLastReportingLocation(Guid orderId)
+        public async Task<KeyValuePair<float, float>?> GetLastReportingLocation(Guid orderId)
         {
-            throw new NotImplementedException();
+            using (var tx = StateManager.CreateTransaction())
+            {
+                var orderIds = await StateManager.GetOrAddAsync<IReliableDictionary<Guid, ActorId>>("orderIds");
+
+                var orderActorId = await orderIds.TryGetValueAsync(tx, orderId);
+                if (!orderActorId.HasValue)
+                    return null;
+
+                var order =  OrderConnectionFactory.GetOrder(orderActorId.Value);
+                return await order.GetLatestLocation();
+            }
         }
 
         public async Task<DateTime?> GetLastReportingTime(Guid orderId)
@@ -41,7 +53,10 @@ namespace TrackerApp.StatefulSvc
             using (var tx = StateManager.CreateTransaction())
             {
                 var timestamps = await StateManager.GetOrAddAsync<IReliableDictionary<Guid, DateTime>>("timestamps");
+                var orderActorIds = await StateManager.GetOrAddAsync<IReliableDictionary<Guid, ActorId>>("orderIds");
                 var timestamp = DateTime.UtcNow;
+                var orderActorId = await orderActorIds.GetOrAddAsync(tx, location.OrderId, ActorId.CreateRandom());
+                await OrderConnectionFactory.GetOrder(orderActorId).SetLocation(timestamp, location.Latitude, location.Longitude);
                 await timestamps.AddOrUpdateAsync(tx, location.OrderId, DateTime.UtcNow, (guid, time) => timestamp);
                 await tx.CommitAsync();
             }
