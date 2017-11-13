@@ -4,16 +4,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{D808F7CD-1531-4972-BE9E-FDC0417CE6CA}</ProjectGuid>
+    <ProjectGuid>{C6901249-A55D-4484-9FF2-5C6C66216F1E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TrackerApp.StatefulSvc</RootNamespace>
-    <AssemblyName>TrackerApp.StatefulSvc</AssemblyName>
+    <RootNamespace>TrackerApp.Order</RootNamespace>
+    <AssemblyName>TrackerApp.Order</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup>
+    <UpdateServiceFabricManifestEnabled>true</UpdateServiceFabricManifestEnabled>
+    <ServicePackagePath>PackageRoot</ServicePackagePath>
+    <ServicePackagePrefix>$(MSBuildProjectName)</ServicePackagePrefix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,9 +38,6 @@
     <ErrorReport>prompt</ErrorReport>
     <PlatformTarget>x64</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AdditionalFileItemNames>$(AdditionalFileItemNames);None</AdditionalFileItemNames>
   </PropertyGroup>
   <PropertyGroup>
     <IsServiceFabricServiceProject>true</IsServiceFabricServiceProject>
@@ -96,13 +98,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StatefulSvc.cs" />
+    <Compile Include="Order.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ServiceEventSource.cs" />
+    <Compile Include="ActorEventSource.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PackageRoot\Config\Settings.xml" />
     <None Include="PackageRoot\ServiceManifest.xml" />
+    <None Include="PackageRoot\Config\Settings.xml" />
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -110,10 +112,6 @@
     <ProjectReference Include="..\TrackerApp.Order.Interfaces\TrackerApp.Order.Interfaces.csproj">
       <Project>{AC81431B-44FA-48C5-A0E1-C27AF7F88043}</Project>
       <Name>TrackerApp.Order.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TrackerApp.Track.Interface\TrackerApp.Track.Interface.csproj">
-      <Project>{9ef60861-408d-42cd-94d8-4320599e9700}</Project>
-      <Name>TrackerApp.Track.Interface</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -124,11 +122,4 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.ServiceFabric.Actors.2.8.219\build\Microsoft.ServiceFabric.Actors.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ServiceFabric.Actors.2.8.219\build\Microsoft.ServiceFabric.Actors.targets'))" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
